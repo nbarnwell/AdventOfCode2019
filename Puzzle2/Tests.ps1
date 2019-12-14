@@ -109,7 +109,7 @@ Describe 'Intcode' {
 
 Invoke-Pester
 
-function Main {
+function RestoreGravityAssistProgram {
     # Load program
     $program = (Get-Content 'input.txt') | Select-Object -First 1
 
@@ -125,4 +125,4 @@ function Main {
     $registers[0]
 }
 
-Main
+RestoreGravityAssistProgram
