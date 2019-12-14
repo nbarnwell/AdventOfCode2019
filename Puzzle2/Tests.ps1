@@ -50,12 +50,19 @@ function Intcode([string] $Program) {
 
     while ($opcode -ne 99) {
         switch ($opcode) {
-            1 { $registers = Add $registers $pointer }
-            2 { $registers = Multiply $registers $pointer }
-            99 { return }
+            1 { 
+                $registers = Add $registers $pointer 
+                $pointer += 4
+            }
+            2 { 
+                $registers = Multiply $registers $pointer 
+                $pointer += 4
+            }
+            99 { 
+                return 
+            }
             Default { throw "Invalid opcode $opcode and position $pointer" }
         }
-        $pointer += 4
         $opcode = $registers[$pointer]
     }
 
@@ -114,8 +121,8 @@ function Main {
 
     # Execute program
     $result = Intcode $program
-    $data = ParseProgram $result
-    $data[0]
+    $registers = ParseProgram $result
+    $registers[0]
 }
 
 Main
