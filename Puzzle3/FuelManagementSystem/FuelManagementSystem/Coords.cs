@@ -5,7 +5,7 @@
         public int X { get; }
         public int Y { get; }
 
-        private Coords(in int x, in int y)
+        private Coords(int x, int y)
         {
             X = x;
             Y = y;

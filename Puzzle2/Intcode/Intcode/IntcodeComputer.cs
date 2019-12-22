@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Intcode
+﻿namespace Intcode
 {
+    using System;
+    using System.Collections.Generic;
+
     public class IntcodeComputer
     {
         private readonly List<int> _memory = new List<int>();
-        private int _instructionPointer = 0;
-        private bool _exitSignalled = false;
+        private int _instructionPointer;
+        private bool _exitSignalled;
 
         public IntcodeComputer(int[] memory)
         {
@@ -41,6 +41,16 @@ namespace Intcode
             _exitSignalled = true;
         }
 
+        public void SetValue(int address, int value)
+        {
+            _memory[address] = value;
+        }
+
+        public int GetValue(int address)
+        {
+            return address > _memory.Count ? 0 : _memory[address];
+        }
+
         private void Exit()
         {
             _exitSignalled = true;
@@ -67,16 +77,6 @@ namespace Intcode
         private void Goto(int pointer)
         {
             _instructionPointer = pointer;
-        }
-
-        public void SetValue(int address, int value)
-        {
-            _memory[address] = value;
-        }
-
-        public int GetValue(int address)
-        {
-            return address > _memory.Count ? 0 : _memory[address];
         }
 
         private void SetDereferencedValue(int pointer, int value)

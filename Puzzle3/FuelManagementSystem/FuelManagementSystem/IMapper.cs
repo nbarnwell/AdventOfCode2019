@@ -6,6 +6,8 @@ namespace FuelManagementSystem
     {
         void MapRoute(int routeId, string directions);
         IEnumerable<MapPoint> GetPoints();
-        IEnumerable<Coords> GetCrossovers();
+        IEnumerable<Coords> GetIntersections();
+
+        IEnumerable<Route> GetRoutes();
     }
 }

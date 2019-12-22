@@ -31,7 +31,7 @@ namespace FuelManagementSystem.Tests
             mapper.MapRoute(1, "R1,U1");
             mapper.MapRoute(2, "U1,R1");
 
-            var crossovers = mapper.GetCrossovers();
+            var crossovers = mapper.GetIntersections();
 
             CollectionAssert.AreEqual(new[] { Coords.From(1, -1)}, crossovers.ToArray());
         }
@@ -44,7 +44,7 @@ namespace FuelManagementSystem.Tests
             mapper.MapRoute(1, "L1,D1");
             mapper.MapRoute(2, "D1,L1");
 
-            var crossovers = mapper.GetCrossovers();
+            var crossovers = mapper.GetIntersections();
 
             CollectionAssert.AreEqual(new[] { Coords.From(-1, 1)}, crossovers.ToArray());
         }
