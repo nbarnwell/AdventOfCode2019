@@ -12,55 +12,49 @@
         [Test]
         public void Program_with_no_exit_instruction()
         {
-            var code = "1,0,0,0";
-            var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
+            var instructions = new[] { 1, 0, 0, 0 };
+            var computer = new IntcodeComputerBuilder().Build();
             
-            Assert.Throws<IndexOutOfRangeException>(() => program.Run());
+            Assert.Throws<IndexOutOfRangeException>(() => computer.Run(instructions));
         }
 
         [Test]
         public void Simple_addition()
         {
-            var code = "1,0,0,0,99";
-            var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
-            program.Run();
+            var instructions = new[] { 1, 0, 0, 0, 99 };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
 
-            Assert.AreEqual(2, program.GetValue(0));
+            Assert.AreEqual(2, computer.Memory.GetValue(0));
         }
 
         [Test]
         public void Simple_multiplication()
         {
-            var code = "2,0,0,0,99";
-            var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
-            program.Run();
+            var instructions = new[] { 2, 0, 0, 0, 99 };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
 
-            Assert.AreEqual(4, program.GetValue(0));
+            Assert.AreEqual(4, computer.Memory.GetValue(0));
         }
 
         [Test]
         public void Multiple_instructions()
         {
-            var code = "1,1,1,4,99,5,6,0,99";
-            var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
-            program.Run();
+            var instructions = new[] { 1, 1, 1, 4, 99, 5, 6, 0, 99 };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
 
-            Assert.AreEqual(30, program.GetValue(0));
+            Assert.AreEqual(30, computer.Memory.GetValue(0));
         }
 
         [Test]
-        [TestCase("-1,0,0,0,99", Description = "First instruction is invalid")]
-        [TestCase("1,0,0,0,-1", Description = "Second instruction is invalid")]
-        public void Invalid_opcode_shouldthrow(string code)
+        [TestCase(new[] { -1, 0, 0, 0, 99 }, Description = "First instruction is invalid")]
+        [TestCase(new[] { 1, 0, 0, 0, -1 }, Description = "Second instruction is invalid")]
+        public void Invalid_opcode_shouldthrow(int[] instructions)
         {
-            var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
-
-            Assert.Throws<InvalidOperationException>(() => program.Run());
+            var computer = new IntcodeComputerBuilder().Build();
+            Assert.Throws<InvalidOperationException>(() => computer.Run(instructions));
         }
 
         [Test]
@@ -68,12 +62,13 @@
         {
             var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle2\\input.txt").First();
             var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
-            program.SetValue(1, 12);
-            program.SetValue(2, 2);
-            program.Run();
+            var instructions = interpreter.Interpret(code);
+            instructions[1] = 12;
+            instructions[2] = 2;
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
 
-            Assert.AreEqual(4576384, program.GetValue(0));
+            Assert.AreEqual(4576384, computer.Memory.GetValue(0));
         }
 
         [Test]
@@ -81,12 +76,13 @@
         {
             var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle2\\input.txt").First();
             var interpreter = new InterpreterBuilder().Build();
-            var program = interpreter.Interpret(code);
-            program.SetValue(1, 53);
-            program.SetValue(2, 98);
-            program.Run();
+            var instructions = interpreter.Interpret(code);
+            instructions[1] = 53;
+            instructions[2] = 98;
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
 
-            Assert.AreEqual(19690720, program.GetValue(0));
+            Assert.AreEqual(19690720, computer.Memory.GetValue(0));
         }
     }
 }

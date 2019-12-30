@@ -1,33 +1,29 @@
 ﻿namespace Intcode
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
     public class IntcodeComputer
     {
+        public readonly MemoryBank Memory = new MemoryBank();
+
         private readonly IInputSender _inputSender;
         private readonly IOutputReceiver _outputReceiver;
-        private readonly List<int> _memory = new List<int>();
         private int _instructionPointer;
         private bool _exitSignalled;
 
-        public IntcodeComputer(int[] memory, IInputSender inputSender, IOutputReceiver outputReceiver)
+        public IntcodeComputer(IInputSender inputSender, IOutputReceiver outputReceiver)
         {
-            //if (memory == null) throw new ArgumentNullException(nameof(memory));
-            //if (inputSender == null) throw new ArgumentNullException(nameof(inputSender));
-            //if (outputReceiver == null) throw new ArgumentNullException(nameof(outputReceiver));
-
             _inputSender = inputSender;
             _outputReceiver = outputReceiver;
-            _memory.AddRange(memory);
         }
 
-        public void Run()
+        public void Run(int[] instructions)
         {
+            Memory.Initialise(instructions);
+
             while (!_exitSignalled)
             {
-                var opcode = GetValue(_instructionPointer);
+                var opcode = Memory.GetValue(_instructionPointer);
 
                 switch (opcode)
                 {
@@ -55,21 +51,6 @@
             _exitSignalled = true;
         }
 
-        public void SetValue(int address, int value)
-        {
-            var maxIndex = _memory.Count - 1;
-            if (address > maxIndex)
-            {
-                _memory.AddRange(Enumerable.Repeat(0, address - maxIndex));
-            }
-            _memory[address] = value;
-        }
-
-        public int GetValue(int address)
-        {
-            return address > _memory.Count - 1 ? 0 : _memory[address];
-        }
-
         private void Exit()
         {
             _exitSignalled = true;
@@ -77,7 +58,7 @@
 
         private void SetOutput()
         {
-            var value = GetDereferencedValue(_instructionPointer + 1);
+            var value = Memory.GetDereferencedValue(_instructionPointer + 1);
             _outputReceiver.Enqueue(value);
             Goto(_instructionPointer + 2);
         }
@@ -85,48 +66,38 @@
         private void GetInput()
         {
             // Get input and save at location specified by arg1
-            var saveLocation = GetValue(_instructionPointer + 1);
+            var saveLocation = Memory.GetValue(_instructionPointer + 1);
             var input = _inputSender.Dequeue();
-            SetValue(saveLocation, input);
+            Memory.SetValue(saveLocation, input);
             Goto(_instructionPointer + 2);
         }
 
         private void Multiply()
         {
-            var term1 = GetDereferencedValue(_instructionPointer + 1);
-            var term2 = GetDereferencedValue(_instructionPointer + 2);
+            var term1 = Memory.GetDereferencedValue(_instructionPointer + 1);
+            var term2 = Memory.GetDereferencedValue(_instructionPointer + 2);
             var result = term1 * term2;
-            SetDereferencedValue(_instructionPointer + 3, result);
+            Memory.SetDereferencedValue(_instructionPointer + 3, result);
             Goto(_instructionPointer + 4);
         }
 
         private void Add()
         {
-            var term1 = GetDereferencedValue(_instructionPointer + 1);
-            var term2 = GetDereferencedValue(_instructionPointer + 2);
+            var term1 = Memory.GetDereferencedValue(_instructionPointer + 1);
+            var term2 = Memory.GetDereferencedValue(_instructionPointer + 2);
             var result = term1 + term2;
-            SetDereferencedValue(_instructionPointer + 3, result);
+            Memory.SetDereferencedValue(_instructionPointer + 3, result);
             Goto(_instructionPointer + 4);
         }
 
         private void Goto(int pointer)
         {
-            var maxIndex = _memory.Count - 1;
+            var maxIndex = Memory.MaxIndex;
             if (pointer > maxIndex)
             {
                 throw new IndexOutOfRangeException($"There is no value at {pointer}. Are you missing an Exit (99)?");
             }
             _instructionPointer = pointer;
-        }
-
-        private void SetDereferencedValue(int pointer, int value)
-        {
-            SetValue(GetValue(pointer), value);
-        }
-
-        private int GetDereferencedValue(int pointer)
-        {
-            return GetValue(GetValue(pointer));
         }
     }
 }

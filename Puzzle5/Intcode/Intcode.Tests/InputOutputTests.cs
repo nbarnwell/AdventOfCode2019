@@ -1,5 +1,6 @@
 ﻿namespace Intcode.Tests
 {
+    using System;
     using NUnit.Framework;
 
     [TestFixture]
@@ -13,11 +14,10 @@
         {
             var inputSender = new QueuedInputSenderBuilder().Build();
             inputSender.Enqueue(input);
-            var interpreter = new InterpreterBuilder().WithInputSender(inputSender).Build();
-            var program = interpreter.Interpret($"3,{location},99"); // Take an input and put the value at position 0
-            program.Run();
+            var computer = new IntcodeComputerBuilder().WithInputSender(inputSender).Build();
+            computer.Run(new[] { 3, location, 99 }); // Take an input and put the value at position 0
 
-            return program.GetValue(location);
+            return computer.Memory.GetValue(location);
         }
 
         [Test]
@@ -26,9 +26,8 @@
         public int Returns_output_defined_by_program(int location)
         {
             IOutputReceiver outputReceiver = new QueuedOutputReceiverBuilder().Build();
-            var interpreter = new InterpreterBuilder().WithOutputReceiver(outputReceiver).Build();
-            var program = interpreter.Interpret($"4,{location},99,50,60");
-            program.Run();
+            var computer = new IntcodeComputerBuilder().WithOutputReceiver(outputReceiver).Build();
+            computer.Run(new[] { 4, location, 99, 50, 60 });
 
             var result = outputReceiver.Dequeue();
             Assert.IsTrue(outputReceiver.IsEmpty());
@@ -37,21 +36,20 @@
         }
 
         [Test]
-        [TestCase("3,0,4,0,99", 50, ExpectedResult = 50)]
-        [TestCase("3,0,4,0,99", 60, ExpectedResult = 60)]
-        public int Outputs_whatever_was_input(string code, int input)
+        [TestCase(new[] { 3, 0, 4, 0, 99 }, 50, ExpectedResult = 50)]
+        [TestCase(new[] { 3, 0, 4, 0, 99 }, 60, ExpectedResult = 60)]
+        public int Outputs_whatever_was_input(int[] instructions, int input)
         {
             var inputSender = new QueuedInputSenderBuilder().Build();
             inputSender.Enqueue(input);
             var outputReceiver = new QueuedOutputReceiverBuilder().Build();
-            var interpreter = 
-                new InterpreterBuilder()
+            var computer = 
+                new IntcodeComputerBuilder()
                     .WithInputSender(inputSender)
                     .WithOutputReceiver(outputReceiver)
                     .Build();
             
-            var program = interpreter.Interpret(code);
-            program.Run();
+            computer.Run(instructions);
 
             var result = outputReceiver.Dequeue();
             Assert.IsTrue(outputReceiver.IsEmpty());
