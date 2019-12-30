@@ -10,6 +10,16 @@
     public class ComputationTests
     {
         [Test]
+        public void Program_with_no_exit_instruction()
+        {
+            var code = "1,0,0,0";
+            var interpreter = new InterpreterBuilder().Build();
+            var program = interpreter.Interpret(code);
+            
+            Assert.Throws<IndexOutOfRangeException>(() => program.Run());
+        }
+
+        [Test]
         public void Simple_addition()
         {
             var code = "1,0,0,0,99";

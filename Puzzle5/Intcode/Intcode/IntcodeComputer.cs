@@ -14,9 +14,9 @@
 
         public IntcodeComputer(int[] memory, IInputSender inputSender, IOutputReceiver outputReceiver)
         {
-            if (memory == null) throw new ArgumentNullException(nameof(memory));
-            if (inputSender == null) throw new ArgumentNullException(nameof(inputSender));
-            if (outputReceiver == null) throw new ArgumentNullException(nameof(outputReceiver));
+            //if (memory == null) throw new ArgumentNullException(nameof(memory));
+            //if (inputSender == null) throw new ArgumentNullException(nameof(inputSender));
+            //if (outputReceiver == null) throw new ArgumentNullException(nameof(outputReceiver));
 
             _inputSender = inputSender;
             _outputReceiver = outputReceiver;
@@ -67,7 +67,7 @@
 
         public int GetValue(int address)
         {
-            return address > _memory.Count ? 0 : _memory[address];
+            return address > _memory.Count - 1 ? 0 : _memory[address];
         }
 
         private void Exit()
@@ -111,6 +111,11 @@
 
         private void Goto(int pointer)
         {
+            var maxIndex = _memory.Count - 1;
+            if (pointer > maxIndex)
+            {
+                throw new IndexOutOfRangeException($"There is no value at {pointer}. Are you missing an Exit (99)?");
+            }
             _instructionPointer = pointer;
         }
 

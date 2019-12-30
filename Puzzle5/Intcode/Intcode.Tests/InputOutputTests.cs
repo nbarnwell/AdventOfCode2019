@@ -35,5 +35,28 @@
 
             return result;
         }
+
+        [Test]
+        [TestCase("3,0,4,0,99", 50, ExpectedResult = 50)]
+        [TestCase("3,0,4,0,99", 60, ExpectedResult = 60)]
+        public int Outputs_whatever_was_input(string code, int input)
+        {
+            var inputSender = new QueuedInputSenderBuilder().Build();
+            inputSender.Enqueue(input);
+            var outputReceiver = new QueuedOutputReceiverBuilder().Build();
+            var interpreter = 
+                new InterpreterBuilder()
+                    .WithInputSender(inputSender)
+                    .WithOutputReceiver(outputReceiver)
+                    .Build();
+            
+            var program = interpreter.Interpret(code);
+            program.Run();
+
+            var result = outputReceiver.Dequeue();
+            Assert.IsTrue(outputReceiver.IsEmpty());
+
+            return result;
+        }
     }
 }

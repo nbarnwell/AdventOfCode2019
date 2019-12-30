@@ -10,8 +10,8 @@
 
         public Interpreter(IInputSender inputSender, IOutputReceiver outputReceiver)
         {
-            if (inputSender == null) throw new ArgumentNullException(nameof(inputSender));
-            if (outputReceiver == null) throw new ArgumentNullException(nameof(outputReceiver));
+            //if (inputSender == null) throw new ArgumentNullException(nameof(inputSender));
+            //if (outputReceiver == null) throw new ArgumentNullException(nameof(outputReceiver));
 
             _inputSender = inputSender;
             _outputReceiver = outputReceiver;
