@@ -9,7 +9,7 @@
         public static void Main()
         {
             var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle2\\input.txt").First();
-            var interpreter = new Interpreter(new QueuedInputSender());
+            var interpreter = new Interpreter(new QueuedInputSender(), new QueuedOutputReceiver());
 
             bool finished = false;
             for (int noun = 0; noun < 99 && !finished; noun++)

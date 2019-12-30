@@ -7,16 +7,19 @@
     public class IntcodeComputer
     {
         private readonly IInputSender _inputSender;
+        private readonly IOutputReceiver _outputReceiver;
         private readonly List<int> _memory = new List<int>();
         private int _instructionPointer;
         private bool _exitSignalled;
 
-        public IntcodeComputer(int[] memory, IInputSender inputSender)
+        public IntcodeComputer(int[] memory, IInputSender inputSender, IOutputReceiver outputReceiver)
         {
             if (memory == null) throw new ArgumentNullException(nameof(memory));
             if (inputSender == null) throw new ArgumentNullException(nameof(inputSender));
+            if (outputReceiver == null) throw new ArgumentNullException(nameof(outputReceiver));
 
             _inputSender = inputSender;
+            _outputReceiver = outputReceiver;
             _memory.AddRange(memory);
         }
 
@@ -36,6 +39,9 @@
                         break;
                     case 3:
                         GetInput();
+                        break;
+                    case 4:
+                        SetOutput();
                         break;
                     case 99:
                         Exit();
@@ -67,6 +73,13 @@
         private void Exit()
         {
             _exitSignalled = true;
+        }
+
+        private void SetOutput()
+        {
+            var value = GetDereferencedValue(_instructionPointer + 1);
+            _outputReceiver.Enqueue(value);
+            Goto(_instructionPointer + 2);
         }
 
         private void GetInput()
