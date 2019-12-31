@@ -36,38 +36,38 @@
             _memory[address] = value;
         }
 
-        public void SetDereferencedValue(int pointer, int value)
+        public void SetDereferencedValue(int address, int value)
         {
-            SetValue(GetValue(pointer), value);
+            SetValue(GetValue(address), value);
         }
 
-        public int GetDereferencedValue(int pointer)
+        public int GetDereferencedValue(int address)
         {
-            return GetValue(GetValue(pointer));
+            return GetValue(GetValue(address));
         }
 
-        public int GetValue(int pointer, ParameterMode parameterMode)
+        public int GetValue(int address, ParameterMode parameterMode)
         {
             switch (parameterMode)
             {
                 case ParameterMode.Position:
-                    return GetValue(pointer);
+                    return GetDereferencedValue(address);
                 case ParameterMode.Immediate:
-                    return GetDereferencedValue(pointer);
+                    return GetValue(address);
                 default:
                     throw new InvalidEnumArgumentException(nameof(parameterMode), (int)parameterMode, typeof(ParameterMode));
             }
         }
 
-        public void SetValue(int pointer, int value, ParameterMode parameterMode)
+        public void SetValue(int address, int value, ParameterMode parameterMode)
         {
             switch (parameterMode)
             {
                 case ParameterMode.Position:
-                    SetValue(pointer, value);
+                    SetDereferencedValue(address, value);
                     break;
                 case ParameterMode.Immediate:
-                    SetDereferencedValue(pointer, value);
+                    SetValue(address, value);
                     break;
                 default:
                     throw new InvalidEnumArgumentException(nameof(parameterMode), (int)parameterMode, typeof(ParameterMode));
