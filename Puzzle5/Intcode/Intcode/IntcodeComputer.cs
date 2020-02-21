@@ -79,7 +79,7 @@
         private void Multiply(Instruction instruction)
         {
             var term1 = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
-            var term2 = Memory.GetDereferencedValue(_instructionPointer + 2);
+            var term2 = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
             
             var result = term1 * term2;
             

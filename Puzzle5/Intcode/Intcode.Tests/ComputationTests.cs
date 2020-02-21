@@ -29,6 +29,16 @@
         }
 
         [Test]
+        public void Simple_addition_using_parameter_modes()
+        {
+            var instructions = new[] { 1101, 100, -1, 4, 0 };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
+
+            Assert.AreEqual(99, computer.Memory.GetValue(4));
+        }
+
+        [Test]
         public void Simple_multiplication()
         {
             var instructions = new[] { 2, 0, 0, 0, 99 };
@@ -83,6 +93,22 @@
             computer.Run(instructions);
 
             Assert.AreEqual(19690720, computer.Memory.GetValue(0));
+        }
+
+        [Test]
+        public void Puzzle5_day1_answer()
+        {
+            var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle5\\input.txt").First();
+            var interpreter = new InterpreterBuilder().Build();
+            var instructions = interpreter.Interpret(code);
+            var inputSender = new QueuedInputSenderBuilder().Build();
+            var outputReceiver = new QueuedOutputReceiverBuilder().Build();
+            var computer = new IntcodeComputerBuilder().WithInputSender(inputSender).WithOutputReceiver(outputReceiver).Build();
+
+            inputSender.Enqueue(1);
+            computer.Run(instructions);
+
+            Assert.AreEqual(6761139, outputReceiver.Dequeue());
         }
     }
 }
