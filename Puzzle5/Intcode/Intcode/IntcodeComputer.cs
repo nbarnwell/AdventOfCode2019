@@ -1,6 +1,8 @@
 ﻿namespace Intcode
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
     public class IntcodeComputer
     {
@@ -8,13 +10,15 @@
 
         private readonly IInputSender _inputSender;
         private readonly IOutputReceiver _outputReceiver;
+        private readonly IInstructionParser _instructionParser;
         private int _instructionPointer;
         private bool _exitSignalled;
 
-        public IntcodeComputer(IInputSender inputSender, IOutputReceiver outputReceiver)
+        public IntcodeComputer(IInputSender inputSender, IOutputReceiver outputReceiver, IInstructionParser instructionParser)
         {
             _inputSender = inputSender;
             _outputReceiver = outputReceiver;
+            _instructionParser = instructionParser;
         }
 
         public void Run(int[] instructions)
@@ -23,69 +27,73 @@
 
             while (!_exitSignalled)
             {
-                var opcode = Memory.GetValue(_instructionPointer);
+                var instruction = _instructionParser.Parse(Memory.GetValue(_instructionPointer));
 
-                switch (opcode)
+                switch (instruction.Opcode)
                 {
                     case 1:
-                        Add();
+                        Add(instruction);
                         break;
                     case 2:
-                        Multiply();
+                        Multiply(instruction);
                         break;
                     case 3:
-                        GetInput();
+                        GetInput(instruction);
                         break;
                     case 4:
-                        SetOutput();
+                        SetOutput(instruction);
                         break;
                     case 99:
-                        Exit();
+                        Exit(instruction);
                         break;
                     default:
                         throw new InvalidOperationException(
-                            $"Unknown opcode {opcode} at address {_instructionPointer}");
+                            $"Unknown opcode {instruction.Opcode} at address {_instructionPointer}");
                 }
             }
 
             _exitSignalled = true;
         }
 
-        private void Exit()
+        private void Exit(Instruction instruction)
         {
             _exitSignalled = true;
         }
 
-        private void SetOutput()
+        private void SetOutput(Instruction instruction)
         {
-            var value = Memory.GetDereferencedValue(_instructionPointer + 1);
+            var value = Memory.GetValue(_instructionPointer + 1, ParameterMode.Position);
             _outputReceiver.Enqueue(value);
             Goto(_instructionPointer + 2);
         }
 
-        private void GetInput()
+        private void GetInput(Instruction instruction)
         {
             // Get input and save at location specified by arg1
-            var saveLocation = Memory.GetValue(_instructionPointer + 1);
+            var saveLocation = Memory.GetValue(_instructionPointer + 1, ParameterMode.Immediate);
             var input = _inputSender.Dequeue();
             Memory.SetValue(saveLocation, input);
             Goto(_instructionPointer + 2);
         }
 
-        private void Multiply()
+        private void Multiply(Instruction instruction)
         {
-            var term1 = Memory.GetDereferencedValue(_instructionPointer + 1);
+            var term1 = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
             var term2 = Memory.GetDereferencedValue(_instructionPointer + 2);
+            
             var result = term1 * term2;
+            
             Memory.SetDereferencedValue(_instructionPointer + 3, result);
             Goto(_instructionPointer + 4);
         }
 
-        private void Add()
+        private void Add(Instruction instruction)
         {
-            var term1 = Memory.GetDereferencedValue(_instructionPointer + 1);
-            var term2 = Memory.GetDereferencedValue(_instructionPointer + 2);
+            var term1 = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
+            var term2 = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
+            
             var result = term1 + term2;
+
             Memory.SetDereferencedValue(_instructionPointer + 3, result);
             Goto(_instructionPointer + 4);
         }
