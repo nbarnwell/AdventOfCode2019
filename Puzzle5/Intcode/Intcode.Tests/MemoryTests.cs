@@ -22,16 +22,16 @@
         public void Roundtrip_positional_value_1()
         {
             var memory = new MemoryBank();
-            memory.SetValue(0, 1);
-            memory.SetDereferencedValue(0, 99);
-            Assert.AreEqual(99, memory.GetDereferencedValue(0));
+            memory.SetValueImmediate(0, 1);
+            memory.SetValueByLocation(0, 99);
+            Assert.AreEqual(99, memory.GetValueByLocation(0));
         }
 
         [Test]
         public void Roundtrip_positional_value_2()
         {
             var memory = new MemoryBank();
-            memory.SetValue(0, 1);
+            memory.SetValueImmediate(0, 1);
             memory.SetValue(0, 99, ParameterMode.Position);
             Assert.AreEqual(99, memory.GetValue(0, ParameterMode.Position));
         }
@@ -40,8 +40,8 @@
         public void Roundtrip_immediate_value_1()
         {
             var memory = new MemoryBank();
-            memory.SetValue(0, 99);
-            Assert.AreEqual(99, memory.GetValue(0));
+            memory.SetValueImmediate(0, 99);
+            Assert.AreEqual(99, memory.GetValueImmediate(0));
         }
 
         [Test]

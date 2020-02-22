@@ -17,7 +17,7 @@
             var computer = new IntcodeComputerBuilder().WithInputSender(inputSender).Build();
             computer.Run(new[] { 3, location, 99 }); // Take an input and put the value at position 0
 
-            return computer.Memory.GetValue(location);
+            return computer.Memory.GetValueImmediate(location);
         }
 
         [Test]

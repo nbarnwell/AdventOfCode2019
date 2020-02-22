@@ -1,5 +1,6 @@
 ﻿namespace Intcode
 {
+    using System;
     using System.Collections.Generic;
 
     public class QueuedOutputReceiver : IOutputReceiver
@@ -13,6 +14,10 @@
 
         public void Enqueue(int value)
         {
+            if (value == 3)
+            {
+                throw new InvalidOperationException("Should always be zero for this test");
+            }
             _queue.Enqueue(value);
         }
 

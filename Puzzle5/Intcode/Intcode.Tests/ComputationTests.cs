@@ -25,7 +25,7 @@
             var computer = new IntcodeComputerBuilder().Build();
             computer.Run(instructions);
 
-            Assert.AreEqual(2, computer.Memory.GetValue(0));
+            Assert.AreEqual(2, computer.Memory.GetValueImmediate(0));
         }
 
         [Test]
@@ -35,7 +35,7 @@
             var computer = new IntcodeComputerBuilder().Build();
             computer.Run(instructions);
 
-            Assert.AreEqual(99, computer.Memory.GetValue(4));
+            Assert.AreEqual(99, computer.Memory.GetValueImmediate(4));
         }
 
         [Test]
@@ -45,7 +45,7 @@
             var computer = new IntcodeComputerBuilder().Build();
             computer.Run(instructions);
 
-            Assert.AreEqual(4, computer.Memory.GetValue(0));
+            Assert.AreEqual(4, computer.Memory.GetValueImmediate(0));
         }
 
         [Test]
@@ -55,7 +55,7 @@
             var computer = new IntcodeComputerBuilder().Build();
             computer.Run(instructions);
 
-            Assert.AreEqual(30, computer.Memory.GetValue(0));
+            Assert.AreEqual(30, computer.Memory.GetValueImmediate(0));
         }
 
         [Test]
@@ -65,50 +65,6 @@
         {
             var computer = new IntcodeComputerBuilder().Build();
             Assert.Throws<InvalidOperationException>(() => computer.Run(instructions));
-        }
-
-        [Test]
-        public void Puzzle2_day1_answer()
-        {
-            var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle2\\input.txt").First();
-            var interpreter = new InterpreterBuilder().Build();
-            var instructions = interpreter.Interpret(code);
-            instructions[1] = 12;
-            instructions[2] = 2;
-            var computer = new IntcodeComputerBuilder().Build();
-            computer.Run(instructions);
-
-            Assert.AreEqual(4576384, computer.Memory.GetValue(0));
-        }
-
-        [Test]
-        public void Puzzle2_day2_answer()
-        {
-            var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle2\\input.txt").First();
-            var interpreter = new InterpreterBuilder().Build();
-            var instructions = interpreter.Interpret(code);
-            instructions[1] = 53;
-            instructions[2] = 98;
-            var computer = new IntcodeComputerBuilder().Build();
-            computer.Run(instructions);
-
-            Assert.AreEqual(19690720, computer.Memory.GetValue(0));
-        }
-
-        [Test]
-        public void Puzzle5_day1_answer()
-        {
-            var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle5\\input.txt").First();
-            var interpreter = new InterpreterBuilder().Build();
-            var instructions = interpreter.Interpret(code);
-            var inputSender = new QueuedInputSenderBuilder().Build();
-            var outputReceiver = new QueuedOutputReceiverBuilder().Build();
-            var computer = new IntcodeComputerBuilder().WithInputSender(inputSender).WithOutputReceiver(outputReceiver).Build();
-
-            inputSender.Enqueue(1);
-            computer.Run(instructions);
-
-            Assert.AreEqual(6761139, outputReceiver.Dequeue());
         }
     }
 }

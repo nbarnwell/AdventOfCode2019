@@ -1,5 +1,6 @@
 ﻿namespace Intcode 
 {
+    using System;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Linq;
@@ -21,29 +22,32 @@
             return address >= 0 && address <= MaxIndex;
         }
 
-        public int GetValue(int address)
+        public int GetValueImmediate(int address)
         {
-            return IsValidAddress(address) ? _memory[address] : 0;
+            var value = GetValue(address);
+            Console.WriteLine("GetValueImmediate({0}) = {1}", address, value);
+            return value;
         }
 
-        public void SetValue(int address, int value)
+        public void SetValueImmediate(int address, int value)
         {
-            var maxIndex = _memory.Count - 1;
-            if (address > maxIndex)
-            {
-                _memory.AddRange(Enumerable.Repeat(0, address - maxIndex));
-            }
-            _memory[address] = value;
+            Console.WriteLine("SetValueImmediate({0}, {1})", address, value);
+            SetValue(address, value);
         }
 
-        public void SetDereferencedValue(int address, int value)
+        public void SetValueByLocation(int address, int value)
         {
-            SetValue(GetValue(address), value);
+            var dereferencedAddress = GetValue(address);
+            Console.WriteLine("SetValueByLocation({0}={1}), {2}", address, dereferencedAddress, value);
+            SetValue(dereferencedAddress, value);
         }
 
-        public int GetDereferencedValue(int address)
+        public int GetValueByLocation(int address)
         {
-            return GetValue(GetValue(address));
+            var dereferencedAddress = GetValue(address);
+            var result = GetValue(dereferencedAddress);
+            Console.WriteLine("GetValueByLocation({0}={1}) = {2}", address, dereferencedAddress, result);
+            return result;
         }
 
         public int GetValue(int address, ParameterMode parameterMode)
@@ -51,9 +55,9 @@
             switch (parameterMode)
             {
                 case ParameterMode.Position:
-                    return GetDereferencedValue(address);
+                    return GetValueByLocation(address);
                 case ParameterMode.Immediate:
-                    return GetValue(address);
+                    return GetValueImmediate(address);
                 default:
                     throw new InvalidEnumArgumentException(nameof(parameterMode), (int)parameterMode, typeof(ParameterMode));
             }
@@ -64,14 +68,32 @@
             switch (parameterMode)
             {
                 case ParameterMode.Position:
-                    SetDereferencedValue(address, value);
+                    SetValueByLocation(address, value);
                     break;
                 case ParameterMode.Immediate:
-                    SetValue(address, value);
+                    SetValueImmediate(address, value);
                     break;
                 default:
                     throw new InvalidEnumArgumentException(nameof(parameterMode), (int)parameterMode, typeof(ParameterMode));
             }
+        }
+
+        private int GetValue(int address)
+        {
+            return IsValidAddress(address) ? _memory[address] : 0;
+        }
+
+        private void SetValue(int address, int value)
+        {
+            var maxIndex = _memory.Count - 1;
+            if (address > maxIndex)
+            {
+                var difference = address - maxIndex;
+                Console.WriteLine("Expanding Memory {0}+{1}={2}", _memory.Count, difference, _memory.Count + difference);
+                _memory.AddRange(Enumerable.Repeat(0, difference));
+            }
+
+            _memory[address] = value;
         }
     }
 }
