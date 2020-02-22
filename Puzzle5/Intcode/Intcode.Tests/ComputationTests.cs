@@ -50,11 +50,26 @@
         }
 
         [Test]
-        [TestCase(new[] { 5, 9, 9,   104, 1,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 1)]
-        [TestCase(new[] { 5, 9, 11,  104, 0,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 0)]
-        [TestCase(new[] { 1105, 1, 6,  104, 1,  99,  104, 1,  99 }, ExpectedResult = 1)]
+        [TestCase(new[] { 5, 10, 11,  104, 0,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 1)]
+        [TestCase(new[] { 5, 9, 11,   104, 0,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 0)]
+        [TestCase(new[] { 1105, 1, 6,  104, 0,  99,  104, 1,  99 }, ExpectedResult = 1)]
         [TestCase(new[] { 1105, 0, 6,  104, 0,  99,  104, 1,  99 }, ExpectedResult = 0)]
         public int Jump_if_true(int[] instructions)
+        {
+            var output = new QueuedOutputReceiverBuilder().Build();
+            var computer = new IntcodeComputerBuilder().WithOutputReceiver(output).Build();
+
+            computer.Run(instructions);
+            
+            return output.Dequeue();
+        }
+
+        [Test]
+        [TestCase(new[] { 6, 9, 11,  104, 0,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 1)]
+        [TestCase(new[] { 6, 10, 11,   104, 0,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 0)]
+        [TestCase(new[] { 1106, 0, 6,  104, 0,  99,  104, 1,  99 }, ExpectedResult = 1)]
+        [TestCase(new[] { 1106, 1, 6,  104, 0,  99,  104, 1,  99 }, ExpectedResult = 0)]
+        public int Jump_if_false(int[] instructions)
         {
             var output = new QueuedOutputReceiverBuilder().Build();
             var computer = new IntcodeComputerBuilder().WithOutputReceiver(output).Build();

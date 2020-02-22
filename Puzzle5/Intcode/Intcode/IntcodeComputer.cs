@@ -51,6 +51,9 @@
                     case 5:
                         JumpIfTrue(instruction);
                         break;
+                    case 6:
+                        JumpIfFalse(instruction);
+                        break;
                     case 99:
                         Exit(instruction);
                         break;
@@ -75,6 +78,22 @@
             var testValue = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
 
             if (testValue != 0)
+            {
+                var newInstructionPointer = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
+                Goto(newInstructionPointer);
+            }
+            else
+            {
+                Goto(_instructionPointer + 3);
+            }
+        }
+
+        private void JumpIfFalse(Instruction instruction)
+        {
+            Console.WriteLine("{0:d6} : JumpIfFalse {1}", _instructionPointer, instruction.GetParameterMode(0));
+            var testValue = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
+
+            if (testValue == 0)
             {
                 var newInstructionPointer = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
                 Goto(newInstructionPointer);
