@@ -8,5 +8,12 @@
         {
             return new QueuedOutputReceiver();
         }
+
+        public QueuedOutputReceiverBuilder ThatIgnoresZeros()
+        {
+            AddAction(x => x.AddFilter(i => i == 0), "ignores zero values");
+
+            return this;
+        }
     }
 }

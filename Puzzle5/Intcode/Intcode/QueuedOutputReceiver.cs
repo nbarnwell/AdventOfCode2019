@@ -2,10 +2,17 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public class QueuedOutputReceiver : IOutputReceiver
     {
         private readonly Queue<int> _queue = new Queue<int>();
+        private readonly List<Predicate<int>> _filters = new List<Predicate<int>>();
+
+        public void AddFilter(Predicate<int> filter)
+        {
+            _filters.Add(filter);
+        }
 
         public int Dequeue()
         {
@@ -14,11 +21,10 @@
 
         public void Enqueue(int value)
         {
-            if (value == 3)
+            if (!_filters.Any(x => x(value)))
             {
-                throw new InvalidOperationException("Should always be zero for this test");
+                _queue.Enqueue(value);
             }
-            _queue.Enqueue(value);
         }
 
         public bool IsEmpty()

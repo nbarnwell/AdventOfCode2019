@@ -42,21 +42,13 @@
             var interpreter = new InterpreterBuilder().Build();
             var instructions = interpreter.Interpret(code);
             var inputSender = new QueuedInputSenderBuilder().Build();
-            var outputReceiver = new QueuedOutputReceiverBuilder().Build();
+            var outputReceiver = new QueuedOutputReceiverBuilder().ThatIgnoresZeros().Build();
             var computer = new IntcodeComputerBuilder().WithInputSender(inputSender).WithOutputReceiver(outputReceiver).Build();
 
             inputSender.Enqueue(1);
             computer.Run(instructions);
 
-            while (!outputReceiver.IsEmpty())
-            {
-                var value = outputReceiver.Dequeue();
-
-                if (value != 0)
-                {
-                    Assert.AreEqual(6761139, value);
-                }
-            }
+            Assert.AreEqual(6761139, outputReceiver.Dequeue());
         }
     }
 }
