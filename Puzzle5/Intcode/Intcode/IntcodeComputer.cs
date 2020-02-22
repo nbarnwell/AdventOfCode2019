@@ -48,6 +48,9 @@
                     case 4:
                         SetOutput(instruction);
                         break;
+                    case 5:
+                        JumpIfTrue(instruction);
+                        break;
                     case 99:
                         Exit(instruction);
                         break;
@@ -64,6 +67,22 @@
         {
             Console.WriteLine("{0:d6} : Exit", _instructionPointer);
             _exitSignalled = true;
+        }
+
+        private void JumpIfTrue(Instruction instruction)
+        {
+            Console.WriteLine("{0:d6} : JumpIfTrue {1}", _instructionPointer, instruction.GetParameterMode(0));
+            var testValue = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
+
+            if (testValue != 0)
+            {
+                var newInstructionPointer = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
+                Goto(newInstructionPointer);
+            }
+            else
+            {
+                Goto(_instructionPointer + 3);
+            }
         }
 
         private void SetOutput(Instruction instruction)

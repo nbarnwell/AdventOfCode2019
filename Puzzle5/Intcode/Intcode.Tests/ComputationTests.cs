@@ -1,6 +1,7 @@
 ﻿namespace Intcode.Tests
 {
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
@@ -46,6 +47,21 @@
             computer.Run(instructions);
 
             Assert.AreEqual(4, computer.Memory.GetValueImmediate(0));
+        }
+
+        [Test]
+        [TestCase(new[] { 5, 9, 9,   104, 1,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 1)]
+        [TestCase(new[] { 5, 9, 11,  104, 0,  99,  104, 1,  99,  0, 1, 6 }, ExpectedResult = 0)]
+        [TestCase(new[] { 1105, 1, 6,  104, 1,  99,  104, 1,  99 }, ExpectedResult = 1)]
+        [TestCase(new[] { 1105, 0, 6,  104, 0,  99,  104, 1,  99 }, ExpectedResult = 0)]
+        public int Jump_if_true(int[] instructions)
+        {
+            var output = new QueuedOutputReceiverBuilder().Build();
+            var computer = new IntcodeComputerBuilder().WithOutputReceiver(output).Build();
+
+            computer.Run(instructions);
+            
+            return output.Dequeue();
         }
 
         [Test]
