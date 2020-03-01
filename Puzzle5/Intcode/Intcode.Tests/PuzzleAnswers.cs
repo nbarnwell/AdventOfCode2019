@@ -50,5 +50,21 @@
 
             Assert.AreEqual(6761139, outputReceiver.Dequeue());
         }
+
+        [Test]
+        public void Puzzle5_day2_answer()
+        {
+            var code = File.ReadLines("C:\\Code\\github\\AdventOfCode2019\\Puzzle5\\input.txt").First();
+            var interpreter = new InterpreterBuilder().Build();
+            var instructions = interpreter.Interpret(code);
+            var inputSender = new QueuedInputSenderBuilder().Build();
+            var outputReceiver = new QueuedOutputReceiverBuilder().ThatIgnoresZeros().Build();
+            var computer = new IntcodeComputerBuilder().WithInputSender(inputSender).WithOutputReceiver(outputReceiver).Build();
+
+            inputSender.Enqueue(5);
+            computer.Run(instructions);
+
+            Assert.AreEqual(9217546, outputReceiver.Dequeue());
+        }
     }
 }
