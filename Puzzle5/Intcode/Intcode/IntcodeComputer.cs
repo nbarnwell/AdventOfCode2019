@@ -54,6 +54,12 @@
                     case 6:
                         JumpIfFalse(instruction);
                         break;
+                    case 7:
+                        LessThan(instruction);
+                        break;
+                    case 8:
+                        Equals(instruction);
+                        break;
                     case 99:
                         Exit(instruction);
                         break;
@@ -102,6 +108,36 @@
             {
                 Goto(_instructionPointer + 3);
             }
+        }
+
+        private void LessThan(Instruction instruction)
+        {
+            Console.WriteLine("{0:d6} : LessThan {1} {2}", _instructionPointer, instruction.GetParameterMode(0), instruction.GetParameterMode(1));
+            var x = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
+            var y = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
+
+            var resultPos = Memory.GetValueImmediate(_instructionPointer + 3);
+
+            var result = x < y ? 1 : 0;
+
+            Memory.SetValueImmediate(resultPos, result);
+
+            Goto(_instructionPointer + 4);
+        }
+
+        private void Equals(Instruction instruction)
+        {
+            Console.WriteLine("{0:d6} : LessThan {1} {2}", _instructionPointer, instruction.GetParameterMode(0), instruction.GetParameterMode(1));
+            var x = Memory.GetValue(_instructionPointer + 1, instruction.GetParameterMode(0));
+            var y = Memory.GetValue(_instructionPointer + 2, instruction.GetParameterMode(1));
+
+            var resultPos = Memory.GetValueImmediate(_instructionPointer + 3);
+
+            var result = x == y ? 1 : 0;
+
+            Memory.SetValueImmediate(resultPos, result);
+
+            Goto(_instructionPointer + 4);
         }
 
         private void SetOutput(Instruction instruction)

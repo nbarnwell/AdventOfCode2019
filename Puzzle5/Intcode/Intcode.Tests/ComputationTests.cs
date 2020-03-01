@@ -80,6 +80,70 @@
         }
 
         [Test]
+        [TestCase(0, 9, ExpectedResult = 1)]
+        [TestCase(9, 0, ExpectedResult = 0)]
+        [TestCase(0, 0, ExpectedResult = 0)]
+        [TestCase(0, -9, ExpectedResult = 0)]
+        [TestCase(-9, 0, ExpectedResult = 1)]
+        public int Less_than_ByLocation(int x, int y)
+        {
+            var instructions = new[] { 7, 5, 6, 7, 99, x, y };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
+
+            return computer.Memory.GetValueImmediate(7);
+        }
+
+        [Test]
+        [TestCase(0, 9, ExpectedResult = 1)]
+        [TestCase(9, 0, ExpectedResult = 0)]
+        [TestCase(0, 0, ExpectedResult = 0)]
+        [TestCase(0, -9, ExpectedResult = 0)]
+        [TestCase(-9, 0, ExpectedResult = 1)]
+        public int Less_than_immediate(int x, int y)
+        {
+            var instructions = new[] { 1107, x, y, 7, 99 };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
+
+            return computer.Memory.GetValueImmediate(7);
+        }
+
+        [Test]
+        [TestCase(0, 9, ExpectedResult = 0)]
+        [TestCase(9, 0, ExpectedResult = 0)]
+        [TestCase(0, 0, ExpectedResult = 1)]
+        [TestCase(0, -9, ExpectedResult = 0)]
+        [TestCase(-9, 0, ExpectedResult = 0)]
+        [TestCase(-9, -9, ExpectedResult = 1)]
+        [TestCase(9, 9, ExpectedResult = 1)]
+        public int Equals_ByLocation(int x, int y)
+        {
+            var instructions = new[] { 8, 5, 6, 7, 99, x, y };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
+
+            return computer.Memory.GetValueImmediate(7);
+        }
+
+        [Test]
+        [TestCase(0, 9, ExpectedResult = 0)]
+        [TestCase(9, 0, ExpectedResult = 0)]
+        [TestCase(0, 0, ExpectedResult = 1)]
+        [TestCase(0, -9, ExpectedResult = 0)]
+        [TestCase(-9, 0, ExpectedResult = 0)]
+        [TestCase(-9, -9, ExpectedResult = 1)]
+        [TestCase(9, 9, ExpectedResult = 1)]
+        public int Equals_immediate(int x, int y)
+        {
+            var instructions = new[] { 1108, x, y, 7, 99 };
+            var computer = new IntcodeComputerBuilder().Build();
+            computer.Run(instructions);
+
+            return computer.Memory.GetValueImmediate(7);
+        }
+
+        [Test]
         public void Multiple_instructions()
         {
             var instructions = new[] { 1, 1, 1, 4, 99, 5, 6, 0, 99 };
