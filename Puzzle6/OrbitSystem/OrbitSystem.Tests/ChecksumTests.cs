@@ -6,7 +6,10 @@ using NUnit.Framework;
 
 namespace OrbitSystem.Tests
 {
-    public class Tests
+    using System.IO;
+    using NUnit.Framework.Constraints;
+
+    public class ChecksumTests
     {
         [Test]
         public void Build_a_chart_1_satellite_at_depth_1()
@@ -71,29 +74,21 @@ namespace OrbitSystem.Tests
         }
 
         [Test]
-        public void Complex_chart_from_DSL()
+        [TestCase("Example1", ExpectedResult = 42)]
+        [TestCase("Example2", ExpectedResult = 3)]
+        [TestCase("Example3", ExpectedResult = 5)]
+        [TestCase("Example4", ExpectedResult = 45)]
+        public int Complex_chart_from_DSL(string inputFile)
         {
             var chartBuilder = new AstronomicalChartBuilder();
-            var input = @"
-                COM)B
-                B)C
-                C)D
-                D)E
-                E)F
-                B)G
-                G)H
-                D)I
-                E)J
-                J)K
-                K)L
-                ";
+            var input = File.ReadAllText($".\\{inputFile}.txt");
             
             var chart = chartBuilder.Build(input);
 
             var calculator = new ChecksumCalculator();
             var checksum = calculator.GetChecksum(chart);
 
-            Assert.AreEqual(42, checksum);
+            return checksum;
         }
     }
 }

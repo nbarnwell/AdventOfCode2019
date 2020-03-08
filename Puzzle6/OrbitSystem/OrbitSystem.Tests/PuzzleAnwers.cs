@@ -17,7 +17,7 @@
             var calculator = new ChecksumCalculator();
             var checksum = calculator.GetChecksum(chart);
 
-            Assert.AreEqual(null, checksum);
+            Assert.AreEqual(154386, checksum);
         }
     }
 }

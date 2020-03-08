@@ -24,7 +24,7 @@ namespace OrbitSystem
                     objects.Add(primary.Name, primary);
                 }
 
-                if (result == null)
+                if (result == null && primary.Name == "COM")
                 {
                     result = new AstronomicalChart(primary);
                 }

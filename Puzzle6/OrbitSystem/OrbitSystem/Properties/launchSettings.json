@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "OrbitSystem": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Code\\github\\AdventOfCode2019\\Puzzle6\\OrbitSystem\\OrbitSystem.Tests\\PuzzleInput.txt\""
+    }
+  }
+}

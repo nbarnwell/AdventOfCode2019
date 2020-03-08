@@ -1,15 +1,10 @@
-using System;
-
 namespace OrbitSystem
 {
-    using System.Collections;
-    using System.Collections.Generic;
-
     public class ChecksumCalculator
     {
         public int GetChecksum(AstronomicalChart chart)
         {
-            var total = GetChecksum(chart.Root, 0);
+            var total = GetChecksum(chart.Root, 1);
 
             return total;
         }
@@ -19,10 +14,11 @@ namespace OrbitSystem
             int total = 0;
             foreach (var satellite in start.Satellites)
             {
+                total += depth;
                 total += GetChecksum(satellite, depth + 1);
             }
 
-            return depth + total;
+            return total;
         }
     }
 }
