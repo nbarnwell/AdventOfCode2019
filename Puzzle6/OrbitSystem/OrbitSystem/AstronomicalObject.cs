@@ -29,5 +29,10 @@ namespace OrbitSystem
             satellite.SetPrimary(this);
             this.satellites.Add(satellite);
         }
+
+        public override string ToString()
+        {
+            return $"{nameof(Name)}: {Name}";
+        }
     }
 }

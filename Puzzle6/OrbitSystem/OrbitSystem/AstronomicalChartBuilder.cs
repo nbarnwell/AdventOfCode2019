@@ -45,7 +45,7 @@ namespace OrbitSystem
         private IEnumerable<Tuple<string, string>> Split(string input)
         {
             return
-                Regex.Split(input.Trim(), "\n")
+                Regex.Split(input.Trim(), "[\n,]")
                      .Select(x => x.Trim())
                      .Where(x => x.Length > 0)
                      .Select(x => 
