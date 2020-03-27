@@ -18,16 +18,19 @@
         {
             // Because we're interested in the steps from startName's ORBIT to destinationName's ORBIT, not from
             // startName to destinationName themselves, we use their primaries
-            var rootToStart = SearchGraph(_chart.Root, startName).ToList();
-            var rootToDestination = SearchGraph(_chart.Root, destinationName).ToList();
+            var start = SearchGraph(_chart.Root, startName);
+            var destination = SearchGraph(_chart.Root, destinationName);
 
-            var startOrbit = rootToStart.Last().Primary;
-            var destinationOrbit = rootToDestination.Last().Primary;
+            var startOrbit = start.Primary;
+            var destinationOrbit = destination.Primary;
 
-            var commonAncestor = FindCommonAncestor(rootToStart, rootToDestination);
+            var startToRoot       = GetParents(startOrbit);
+            var destinationToRoot = GetParents(destinationOrbit);
 
-            var startToCommonAncestor = GetParents(startOrbit).TakeWhile(x => x != commonAncestor);
-            var destinationToCommonAncestor = GetParents(destinationOrbit).TakeWhile(x => x != commonAncestor);
+            var commonAncestor = FindCommonAncestor(startToRoot.Reverse(), destinationToRoot.Reverse());
+
+            var startToCommonAncestor       = startToRoot.TakeWhile(x => x != commonAncestor);
+            var destinationToCommonAncestor = destinationToRoot.TakeWhile(x => x != commonAncestor);
 
             return startToCommonAncestor.Append(commonAncestor).Concat(destinationToCommonAncestor);
         }
@@ -43,14 +46,17 @@
             while (current != null);
         }
 
-        private AstronomicalObject FindCommonAncestor(IList<AstronomicalObject> pathToStart, IList<AstronomicalObject> pathToDestination)
+        private AstronomicalObject FindCommonAncestor(IEnumerable<AstronomicalObject> pathToStart, IEnumerable<AstronomicalObject> pathToDestination)
         {
+            var path1 = pathToStart.ToList();
+            var path2 = pathToDestination.ToList();
+
             AstronomicalObject lastMatch = null;
-            for (int i = 0; i < Math.Min(pathToStart.Count, pathToDestination.Count); i++)
+            for (int i = 0; i < Math.Min(path1.Count, path2.Count); i++)
             {
-                if (pathToStart[i].Name == pathToDestination[i].Name)
+                if (path1[i].Name == path2[i].Name)
                 {
-                    lastMatch = pathToStart[i];
+                    lastMatch = path1[i];
                 }
                 else
                 {
@@ -61,30 +67,24 @@
             return lastMatch;
         }
 
-        private IEnumerable<AstronomicalObject> SearchGraph(AstronomicalObject start, string searchFor)
+        private AstronomicalObject SearchGraph(AstronomicalObject start, string searchFor)
         {
             if (start.Name == searchFor)
             {
-                foreach (var parent in GetParents(start).Reverse())
-                {
-                    yield return parent;
-                }
+                return start;
             }
-            else
-            {
-                foreach (var satellite in start.Satellites)
-                {
-                    var results = SearchGraph(satellite, searchFor);
 
-                    if (results.Any())
-                    {
-                        foreach (var result in results)
-                        {
-                            yield return result;
-                        }
-                    }
+            foreach (var satellite in start.Satellites)
+            {
+                var result = SearchGraph(satellite, searchFor);
+
+                if (result != null)
+                {
+                    return result;
                 }
             }
+
+            return null;
         }
     }
 }

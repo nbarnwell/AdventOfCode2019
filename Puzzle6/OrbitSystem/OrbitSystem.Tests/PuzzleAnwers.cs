@@ -32,7 +32,7 @@
             var routeFinder = new AstronomicalRouteFinder(chart);
             var route = routeFinder.CalculateRoute("YOU", "SAN");
 
-            Assert.AreEqual(null, route.Count() - 1);
+            Assert.AreEqual(346, route.Count() - 1);
         }
     }
 }
