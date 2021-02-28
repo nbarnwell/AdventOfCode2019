@@ -1,16 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks.Sources;
 
 namespace Intcode
 {
     public static class EnumerableExtensions
     {
+        public static int Largest(this IEnumerable<int> values)
+        {
+            return values.OrderBy(x => x).Last();
+        }
+
         public static void ForEach<T>(this IEnumerable<T> values, Action<T> action)
         {
             foreach (var value in values)
             {
                 action(value);
+            }
+        }
+
+        public static IEnumerable<T> Rotate<T>(this IEnumerable<T> values)
+        {
+            if (!values.Any())
+            {
+                return Enumerable.Empty<T>();
+            }
+            else if (values.Count() == 1)
+            {
+                return values;
+            }
+            else
+            {
+                return values.Skip(1).Concat(new[] {values.First()});
             }
         }
 
